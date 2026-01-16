@@ -23,4 +23,27 @@ import userRoute from "./routes/user.routes.js";
 
 app.use("/api/v1/users",userRoute);
 
+// Error handling middleware
+app.use((err, req, res, next) => {
+    let error = err;
+
+    // If it's an ApiError instance
+    if (err.statusCode) {
+        return res.status(err.statusCode).json({
+            statusCode: err.statusCode,
+            data: err.data,
+            message: err.message,
+            success: err.success,
+            errors: err.errors
+        });
+    }
+
+    // Default error response
+    res.status(500).json({
+        statusCode: 500,
+        message: "Internal Server Error",
+        success: false
+    });
+});
+
 export { app }
